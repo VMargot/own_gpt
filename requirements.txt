@@ -1,0 +1,5 @@
+jupyter
+numpy
+tiktoken
+torch
+tqdm
