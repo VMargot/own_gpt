@@ -10,7 +10,7 @@ block_size = 256   # what is the maximum context length for preditction
 max_iters = 5000
 eval_interval = 500
 learning_rate = 3e-4
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 eval_iters = 200
 n_embd = 384  #  C  (must be a multiple of n_head)
 n_head = 6
@@ -35,7 +35,7 @@ encode = lambda s: [stoi[c] for c in s]  # encoding part
 decode = lambda l: ''.join([itos[i] for i in l])  # decoding part
 
 # Train and test splits
-data = torch.tensor(encode(text), dtype=torch.long)
+data = torch.tensor(encode(text), dtype=torch.long).to(device)
 n = int(0.9 * len(data))
 train_data = data[:n]
 val_data = data[n:]
@@ -218,5 +218,5 @@ for iter in range(max_iters):
     optimizer.step()  # uptdate parameters
 
 
-context = torch.zeros((1,1), dtype=torch.long)
-print(decode(list(m.generate(context, max_new_tokens=500)[0].numpy())))
+context = torch.zeros((1,1), dtype=torch.long).to(device)
+print(decode(list(m.generate(context, max_new_tokens=500)[0].to('cpu').numpy())))
